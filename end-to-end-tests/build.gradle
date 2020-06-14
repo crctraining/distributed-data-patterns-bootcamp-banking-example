@@ -1,0 +1,27 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+    }
+}
+
+dependencies {
+
+    testCompile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+
+    testCompile project(":customer-service-api-web")
+
+    testCompile project(":account-service-api-messaging")
+
+    testCompile project(":money-transfer-service-api-web")
+
+    testCompile project(":customer-view-service-common")
+
+    testCompile project(":api-gateway-service-api-web")
+
+    testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
+
+}
+

@@ -1,0 +1,8 @@
+dependencies {
+    compile "io.eventuate.local.java:eventuate-client-java-spring:$eventuateLocalVersion"
+
+    compile "io.springfox:springfox-swagger2:2.5.0"
+    compile 'io.springfox:springfox-swagger-ui:2.5.0'
+    compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+
+}
