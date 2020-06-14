@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.9.2"
+    }
+}
+
+apply plugin: 'docker-compose'
+
+subprojects {
+    apply plugin: 'java'
+    targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        jcenter()
+        eventuateMavenRepoUrl.split(',').each { repoUrl -> maven { url repoUrl } }
+    }
+
+    dependencies {
+        compile 'commons-lang:commons-lang:2.6'
+
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.mockito:mockito-core:1.9.5'
+    }
+}
+
+dockerCompose {
+    projectName = null
+}
+
+composeBuild.dependsOn("assemble")
+subprojects.each {
+    if (it.name.endsWith("-service")) {
+        composeUp.dependsOn(":" + it.name + ":assemble")
+    }
+}
+
+task buildAndStartServicesMySql(type: GradleBuild) {
+    tasks = ["composeUp"]
+}
+
+task endToEndTests(type: GradleBuild) {
+    tasks = [":end-to-end-tests:test"]
+}
+
+endToEndTests.dependsOn(composeUp)
+endToEndTests.dependsOn(":end-to-end-tests:cleanTest")
+
+task stopServicesMySql(type: GradleBuild) {
+    tasks = ["composeDown"]
+}

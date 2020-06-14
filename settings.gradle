@@ -1,0 +1,24 @@
+include "common-swagger"
+include "common-domain"
+
+include "customer-service-api-messaging"
+include "customer-service-api-web"
+include "customer-service"
+
+include "account-service-api-messaging"
+include "account-service-api-web"
+include "account-service"
+
+include "money-transfer-service-api-messaging"
+include "money-transfer-service-api-web"
+include "money-transfer-service"
+
+include "customer-view-service-common"
+
+include "customer-view-service"
+
+include "api-gateway-service-api-web"
+include "api-gateway-service"
+
+include "end-to-end-tests"
+
