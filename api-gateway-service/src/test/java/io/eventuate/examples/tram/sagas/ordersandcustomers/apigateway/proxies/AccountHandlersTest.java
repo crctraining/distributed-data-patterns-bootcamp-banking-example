@@ -1,8 +1,6 @@
 package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.proxies;
 
 import io.eventuate.examples.tram.sagas.ordersandcustomers.customers.apigateway.AccountWithCustomer;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import net.chrisrichardson.bankingexample.customerservice.common.CustomerInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -19,9 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import javax.xml.ws.WebServiceClient;
-import java.util.stream.IntStream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;

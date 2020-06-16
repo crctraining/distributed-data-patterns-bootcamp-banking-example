@@ -32,6 +32,11 @@ subprojects {
 
 dockerCompose {
     projectName = null
+
+    infrastructure {
+        projectName = null
+        startedServices = ["cdc-service", "zipkin", "mongodb"]
+    }
 }
 
 composeBuild.dependsOn("assemble")
