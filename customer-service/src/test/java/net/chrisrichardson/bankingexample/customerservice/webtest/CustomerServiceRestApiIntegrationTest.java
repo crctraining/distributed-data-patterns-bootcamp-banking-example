@@ -1,13 +1,19 @@
 package net.chrisrichardson.bankingexample.customerservice.webtest;
 
+import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
 import net.chrisrichardson.bankingexample.customerservice.backend.CustomerMother;
 import net.chrisrichardson.bankingexample.customerservice.common.CustomerInfo;
 import net.chrisrichardson.bankingexample.customerservice.common.CreateCustomerResponse;
+import net.chrisrichardson.bankingexample.customerservice.web.CustomerWebConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = CustomerServiceRestApiIntegrationTestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = CustomerServiceRestApiIntegrationTest.CustomerServiceRestApiIntegrationTestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CustomerServiceRestApiIntegrationTest {
 
   @Value("${local.server.port}")
@@ -47,5 +53,16 @@ public class CustomerServiceRestApiIntegrationTest {
     assertNotNull(loadedCustomerInfo);
 
     assertEquals(customerInfo, loadedCustomerInfo);
+  }
+
+  @Configuration
+  @Import({CustomerWebConfiguration.class, TramInMemoryConfiguration.class})
+  @EnableAutoConfiguration
+  public static class CustomerServiceRestApiIntegrationTestConfiguration {
+
+    @Bean
+    public RestTemplate restTemplate() {
+      return new RestTemplate();
+    }
   }
 }

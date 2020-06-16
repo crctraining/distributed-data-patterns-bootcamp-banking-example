@@ -1,4 +1,4 @@
-package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.common;
+package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

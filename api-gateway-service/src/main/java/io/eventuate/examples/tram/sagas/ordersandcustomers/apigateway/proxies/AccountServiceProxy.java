@@ -1,6 +1,6 @@
 package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.proxies;
 
-import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.orders.AccountDestinations;
+import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.ApiGatewayDestinations;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
@@ -17,12 +17,12 @@ import java.util.Optional;
 public class AccountServiceProxy {
   private final CircuitBreaker circuitBreaker;
   private final TimeLimiter timeLimiter;
-  private final AccountDestinations accountDestinations;
+  private final ApiGatewayDestinations apiGatewayDestinations;
 
   private WebClient client;
 
-  public AccountServiceProxy(AccountDestinations accountDestinations, WebClient client, CircuitBreakerRegistry circuitBreakerRegistry, TimeLimiterRegistry timeLimiterRegistry) {
-    this.accountDestinations = accountDestinations;
+  public AccountServiceProxy(ApiGatewayDestinations apiGatewayDestinations, WebClient client, CircuitBreakerRegistry circuitBreakerRegistry, TimeLimiterRegistry timeLimiterRegistry) {
+    this.apiGatewayDestinations = apiGatewayDestinations;
     this.client = client;
     this.circuitBreaker = circuitBreakerRegistry.circuitBreaker("MY_CIRCUIT_BREAKER");
     this.timeLimiter = timeLimiterRegistry.timeLimiter("MY_TIME_LIMITER");
@@ -33,7 +33,7 @@ public class AccountServiceProxy {
   public Mono<Optional<GetAccountResponse>> findAccountById(String accountId) {
     Mono<ClientResponse> response = client
             .get()
-            .uri("http://account-service:8080" + "/api/accounts/{accountId}", accountId)
+            .uri(apiGatewayDestinations.getAccountServiceUrl() + "/api/accounts/{accountId}", accountId)
             .exchange();
 
     return response.flatMap(resp -> {

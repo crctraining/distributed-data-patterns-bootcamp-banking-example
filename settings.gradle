@@ -7,7 +7,7 @@ include "customer-service"
 
 include "account-service-api-messaging"
 include "account-service-api-web"
-// include "account-service"
+include "account-service"
 
 include "money-transfer-service-api-messaging"
 include "money-transfer-service-api-web"

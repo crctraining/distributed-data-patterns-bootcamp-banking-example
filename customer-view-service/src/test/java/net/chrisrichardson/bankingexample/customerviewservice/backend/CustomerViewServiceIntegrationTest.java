@@ -2,6 +2,8 @@ package net.chrisrichardson.bankingexample.customerviewservice.backend;
 
 import io.eventuate.common.id.IdGenerator;
 import io.eventuate.common.id.IdGeneratorImpl;
+import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
+import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountInfo;
 import net.chrisrichardson.bankingexample.commondomain.Money;
 import net.chrisrichardson.bankingexample.customerservice.common.Address;
@@ -12,7 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Optional;
@@ -22,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = CustomerViewServiceIntegrationTestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = CustomerViewServiceIntegrationTest.CustomerViewServiceIntegrationTestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class CustomerViewServiceIntegrationTest {
 
   @Autowired
@@ -92,4 +97,9 @@ public class CustomerViewServiceIntegrationTest {
     assertEquals(customerInfo.getSsn(), customerView.get().getCustomerInfo().getSsn());
   }
 
+  @Configuration
+  @Import({CustomerViewBackendConfiguration.class, TramInMemoryConfiguration.class})
+  @EnableAutoConfiguration(exclude = CommonSwaggerConfiguration.class)
+  public static class CustomerViewServiceIntegrationTestConfiguration {
+  }
 }

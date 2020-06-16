@@ -1,22 +1,24 @@
 package net.chrisrichardson.bankingexample.moneytransferservice.backend;
 
-import io.eventuate.EntityWithIdAndVersion;
-import io.eventuate.EntityWithMetadata;
+import io.eventuate.tram.sagas.spring.inmemory.TramSagaInMemoryConfiguration;
+import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
 import net.chrisrichardson.bankingexample.moneytransferservice.common.MoneyTransferInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = MoneyTransferIntegrationTestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = MoneyTransferServiceIntegrationTest.MoneyTransferIntegrationTestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class MoneyTransferServiceIntegrationTest {
 
   @Autowired
@@ -34,5 +36,12 @@ public class MoneyTransferServiceIntegrationTest {
     assertTrue(loadedMoneyTransfer.isPresent());
 
     assertEquals(moneyTransferInfo, loadedMoneyTransfer.get().getMoneyTransferInfo());
+  }
+
+  @Configuration
+  @Import({MoneyTransferBackendConfiguration.class, TramSagaInMemoryConfiguration.class})
+  @EnableAutoConfiguration(exclude= CommonSwaggerConfiguration.class)
+  public static class MoneyTransferIntegrationTestConfiguration {
+
   }
 }
