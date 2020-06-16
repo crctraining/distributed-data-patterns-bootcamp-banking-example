@@ -1,10 +1,7 @@
 package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.proxies;
 
-import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.common.CommonConfiguration;
-import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.customers.CustomerConfiguration;
-import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.customers.CustomerDestinations;
-import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.orders.OrderConfiguration;
-import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.orders.AccountDestinations;
+import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.ApiGatewayConfiguration;
+import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.ApiGatewayDestinations;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
@@ -23,7 +20,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.Duration;
 
 @Configuration
-@Import({CommonConfiguration.class, OrderConfiguration.class, CustomerConfiguration.class})
+@Import({ApiGatewayConfiguration.class})
 public class ProxyConfiguration {
 
   private Logger logger = LoggerFactory.getLogger(getClass());
@@ -32,13 +29,13 @@ public class ProxyConfiguration {
   private long apiGatewayTimeoutMillis;
 
   @Bean
-  public AccountServiceProxy orderServiceProxy(AccountDestinations accountDestinations, WebClient client, CircuitBreakerRegistry circuitBreakerRegistry, TimeLimiterRegistry timeLimiterRegistry) {
-    return new AccountServiceProxy(accountDestinations, client, circuitBreakerRegistry, timeLimiterRegistry);
+  public AccountServiceProxy orderServiceProxy(ApiGatewayDestinations apiGatewayDestinations, WebClient client, CircuitBreakerRegistry circuitBreakerRegistry, TimeLimiterRegistry timeLimiterRegistry) {
+    return new AccountServiceProxy(apiGatewayDestinations, client, circuitBreakerRegistry, timeLimiterRegistry);
   }
 
   @Bean
-  public CustomerServiceProxy customerServiceProxy(CustomerDestinations customerDestinations, WebClient client, CircuitBreakerRegistry circuitBreakerRegistry, TimeLimiterRegistry timeLimiterRegistry) {
-    return new CustomerServiceProxy(client, circuitBreakerRegistry, "http://customer-service:8080", timeLimiterRegistry);
+  public CustomerServiceProxy customerServiceProxy(ApiGatewayDestinations apiGatewayDestinations, WebClient client, CircuitBreakerRegistry circuitBreakerRegistry, TimeLimiterRegistry timeLimiterRegistry) {
+    return new CustomerServiceProxy(client, circuitBreakerRegistry, apiGatewayDestinations.getCustomerServiceUrl(), timeLimiterRegistry);
   }
 
   @Bean

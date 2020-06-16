@@ -24,7 +24,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CustomerServiceProxyTest.Config.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"customer.destinations.customerServiceUrl=http://localhost:${wiremock.server.port}", "order.destinations.orderServiceUrl=http://localhost:${wiremock.server.port}"})
+        properties = {
+        "api.gateway.destinations.customerServiceUrl=http://localhost:${wiremock.server.port}",
+                "api.gateway.destinations.accountServiceUrl=http://localhost:${wiremock.server.port}",
+                "api.gateway.destinations.moneyTransferServiceUrl=http://localhost:${wiremock.server.port}",
+                "api.gateway.destinations.customerViewServiceUrl=http://localhost:${wiremock.server.port}"
+})
 @AutoConfigureWireMock(port = 0)
 public class CustomerServiceProxyTest {
 
@@ -52,7 +57,7 @@ public class CustomerServiceProxyTest {
 
     String expectedResponse = json.toString();
 
-    stubFor(get(urlEqualTo("/customers/101"))
+    stubFor(get(urlEqualTo("/api/customers/101"))
             .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
@@ -63,7 +68,7 @@ public class CustomerServiceProxyTest {
 
     assertEquals("Fred", customer.getName().getFirstName());
 
-    verify(getRequestedFor(urlMatching("/customers/101")));
+    verify(getRequestedFor(urlMatching("/api/customers/101")));
   }
 
   @Test(expected = CallNotPermittedException.class)

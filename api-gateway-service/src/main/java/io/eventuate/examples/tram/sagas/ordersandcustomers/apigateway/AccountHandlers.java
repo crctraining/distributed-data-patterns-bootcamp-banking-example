@@ -1,4 +1,4 @@
-package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.customers;
+package io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway;
 
 import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.proxies.AccountServiceProxy;
 import io.eventuate.examples.tram.sagas.ordersandcustomers.apigateway.proxies.CustomerServiceProxy;
@@ -29,26 +29,24 @@ public class AccountHandlers {
   public Mono<ServerResponse> getAccountWithCustomer(ServerRequest serverRequest) {
     String accountId = serverRequest.pathVariable("accountId");
 
-    Mono<Optional<GetAccountResponse>> x = orderService.findAccountById(accountId);
-    Mono<Optional<Mono<AccountWithCustomer>>> y = x
-            .map(maybeAccount ->
-            {
-              Optional<GetAccountResponse> z = maybeAccount;
-              Optional<Mono<AccountWithCustomer>> accountWithCustomerMono = z.map(account ->
-              {
-                Mono<AccountWithCustomer> objectMono = customerService.findCustomerById(account.getAccountInfo().getCustomerId())
-                        .map(customer -> new AccountWithCustomer(account, customer));
-                return objectMono;
-              });
-              return accountWithCustomerMono;
-            });
-    Mono<ServerResponse> z = y
+    Mono<Optional<GetAccountResponse>> accountResponse = orderService.findAccountById(accountId);
+
+    Mono<Optional<AccountWithCustomer>> accountWithCustomerResponse = accountResponse
+            .flatMap(maybeAccount ->
+                    maybeAccount.map(account ->
+                            customerService.findCustomerById(account.getAccountInfo().getCustomerId())
+                                    .map(customer -> Optional.of(new AccountWithCustomer(account, customer))))
+                    .orElseGet(() -> Mono.just(Optional.empty())));
+
+    return accountWithCustomerResponse
             .flatMap(maybeAccountWithCustomer ->
-                    maybeAccountWithCustomer.map(accountWithCustomer ->
-                            accountWithCustomer.flatMap((AccountWithCustomer n) -> ServerResponse.ok()
+                    maybeAccountWithCustomer
+                            .map(accountWithCustomer ->
+                               ServerResponse.ok()
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .body(fromValue(n))))
+                                    .body(fromValue(accountWithCustomer)))
                             .orElseGet(() -> ServerResponse.notFound().build()));
-    return z;
   }
+
+
 }
