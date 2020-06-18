@@ -3,7 +3,7 @@ package net.chrisrichardson.bankingexample.moneytransferservice.backend;
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
 import net.chrisrichardson.bankingexample.moneytransferservice.common.MoneyTransferInfo;
 import net.chrisrichardson.bankingexample.moneytransferservice.sagas.TransferMoneySaga;
-import net.chrisrichardson.bankingexample.moneytransferservice.sagas.TransferMoneySagaState;
+import net.chrisrichardson.bankingexample.moneytransferservice.sagas.TransferMoneySagaData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,18 +26,14 @@ public class MoneyTransferService {
   }
 
   public MoneyTransfer createMoneyTransfer(MoneyTransferInfo moneyTransferInfo) {
-
-    MoneyTransfer mt = new MoneyTransfer(moneyTransferInfo);
-    moneyTransferRepository.save(mt);
-
-    createTransferMoneySaga(mt.getId(), moneyTransferInfo);
-
-    return mt;
+    TransferMoneySagaData data = createTransferMoneySaga(moneyTransferInfo);
+    return moneyTransferRepository.findById(data.getMoneyTransferId()).get();
   }
 
-  private void createTransferMoneySaga(Long moneyTransferId, MoneyTransferInfo moneyTransferInfo) {
-    TransferMoneySagaState data = new TransferMoneySagaState(moneyTransferId, moneyTransferInfo);
+  private TransferMoneySagaData createTransferMoneySaga(MoneyTransferInfo moneyTransferInfo) {
+    TransferMoneySagaData data = new TransferMoneySagaData(moneyTransferInfo);
     sagaInstanceFactory.create(transferMoneySaga, data);
+    return data;
   }
 
   public Optional<MoneyTransfer> findMoneyTransfer(long id) {

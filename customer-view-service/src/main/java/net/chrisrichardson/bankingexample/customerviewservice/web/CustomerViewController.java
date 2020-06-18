@@ -20,7 +20,7 @@ public class CustomerViewController {
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<CustomerView> getCustomer(@PathVariable String id) {
     return customerViewService.findByCustomerId(id)
-            .map(c -> new ResponseEntity<>(c, HttpStatus.OK))
+            .map(ResponseEntity::ok)
             .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
   }

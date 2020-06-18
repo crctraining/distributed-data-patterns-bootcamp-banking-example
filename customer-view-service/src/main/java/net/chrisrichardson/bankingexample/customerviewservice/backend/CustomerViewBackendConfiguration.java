@@ -17,21 +17,6 @@ public class CustomerViewBackendConfiguration {
     return new CustomerViewService(mongoTemplate, customerViewRepository);
   }
 
-  @Bean
-  public CustomerViewCustomerEventSubscriber customerViewEventSubscriber(CustomerViewService customerViewService) {
-    return new CustomerViewCustomerEventSubscriber(customerViewService);
-  }
-
-
-  @Bean
-  public DomainEventDispatcher customerViewServiceCustomerEventsDispatcher(CustomerViewCustomerEventSubscriber customerViewCustomerEventSubscriber,
-                                                                           MessageConsumer messageConsumer,
-                                                                           DomainEventNameMapping domainEventNameMapping) {
-    return new DomainEventDispatcher("customerViewServiceCustomerEventsDispatcher",
-            customerViewCustomerEventSubscriber.domainEventHandlers(),
-            messageConsumer,
-            domainEventNameMapping);
-  }
 
   @Bean
   public CustomerViewAccountEventsSubscriber customerViewAccountEventsSubscriber(CustomerViewService customerViewService) {
@@ -43,7 +28,7 @@ public class CustomerViewBackendConfiguration {
   public DomainEventDispatcher customerViewAccountEventsSubscriberDispatcher(CustomerViewAccountEventsSubscriber customerViewAccountEventsSubscriber,
                                                                              MessageConsumer messageConsumer,
                                                                              DomainEventNameMapping domainEventNameMapping) {
-    return new DomainEventDispatcher("customerViewAccountEventsSubscriberDispatcher",
+    return new DomainEventDispatcher("customerViewEventsSubscriberDispatcher",
             customerViewAccountEventsSubscriber.domainEventHandlers(),
             messageConsumer,
             domainEventNameMapping);
