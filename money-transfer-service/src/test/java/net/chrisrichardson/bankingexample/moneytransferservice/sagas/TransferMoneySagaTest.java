@@ -4,14 +4,20 @@ import net.chrisrichardson.bankingexample.accountservice.common.commands.Account
 import net.chrisrichardson.bankingexample.accountservice.common.commands.CreditCommand;
 import net.chrisrichardson.bankingexample.accountservice.common.commands.DebitCommand;
 import net.chrisrichardson.bankingexample.commondomain.Money;
+import net.chrisrichardson.bankingexample.moneytransferservice.backend.MoneyTransfer;
+import net.chrisrichardson.bankingexample.moneytransferservice.backend.MoneyTransferRepository;
 import net.chrisrichardson.bankingexample.moneytransferservice.common.MoneyTransferInfo;
-import net.chrisrichardson.bankingexample.moneytransferservice.common.commands.CancelMoneyTransferCommand;
-import net.chrisrichardson.bankingexample.moneytransferservice.common.commands.CompleteMoneyTransferCommand;
-import net.chrisrichardson.bankingexample.moneytransferservice.common.commands.MoneyTransferServiceChannels;
+import net.chrisrichardson.bankingexample.moneytransferservice.common.MoneyTransferState;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static io.eventuate.tram.sagas.testing.SagaUnitTestSupport.given;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TransferMoneySagaTest {
 
@@ -21,17 +27,33 @@ public class TransferMoneySagaTest {
   private Money amount = new Money("78.90");
   private MoneyTransferInfo moneyTransferInfo = new MoneyTransferInfo(fromAccountId, toAccountId, amount);
   private AccountServiceProxy accountServiceProxy = new AccountServiceProxy();
-  private MoneyTransferServiceProxy moneyTransferServiceProxy = new MoneyTransferServiceProxy();
+  private MoneyTransferRepository moneyTransferRepository;
+
+  private MoneyTransfer moneyTransfer;
 
   private TransferMoneySaga makeTransferMoneySaga() {
-    return new TransferMoneySaga(accountServiceProxy, moneyTransferServiceProxy);
+    return new TransferMoneySaga(accountServiceProxy, moneyTransferRepository);
+  }
+
+  @Before
+  public void setUp() {
+    moneyTransferRepository = mock(MoneyTransferRepository.class);
+
+    when(moneyTransferRepository.save(any(MoneyTransfer.class))).then( invocation -> {
+      moneyTransfer = (MoneyTransfer) invocation.getArguments()[0];
+      moneyTransfer.setId(moneyTransferId);
+      return moneyTransfer;
+    });
+
+    when(moneyTransferRepository.findById(moneyTransferId)).thenAnswer(invocation -> Optional.of(moneyTransfer));
+
   }
 
   @Test
   public void shouldTransferMoney() {
     given()
       .saga(makeTransferMoneySaga(),
-                    new TransferMoneySagaState(moneyTransferId, moneyTransferInfo)).
+                    new TransferMoneySagaData(moneyTransferInfo)).
     expect().
       command(new DebitCommand(fromAccountId, amount)).
       to(AccountServiceChannels.accountServiceChannel).
@@ -41,18 +63,17 @@ public class TransferMoneySagaTest {
       command(new CreditCommand(toAccountId, amount)).
       to(AccountServiceChannels.accountServiceChannel).
     andGiven().
-      successReply().
-    expect().
-      command(new CompleteMoneyTransferCommand(moneyTransferId)).
-      to(MoneyTransferServiceChannels.moneyTransferServiceChannel)
-    ;
+      successReply()
+    .expectCompletedSuccessfully();
+
+    assertEquals(MoneyTransferState.COMPLETED, moneyTransfer.getState());
   }
 
   @Test
   public void shouldFailDueToInsufficientFunds() {
     given()
       .saga(makeTransferMoneySaga(),
-                    new TransferMoneySagaState(moneyTransferId, moneyTransferInfo)).
+                    new TransferMoneySagaData(moneyTransferInfo)).
     expect().
       command(new DebitCommand(fromAccountId, amount)).
       to(AccountServiceChannels.accountServiceChannel).
@@ -67,11 +88,10 @@ public class TransferMoneySagaTest {
       command(new CreditCommand(fromAccountId, amount)).
       to(AccountServiceChannels.accountServiceChannel).
       andGiven().
-      successReply().
-    expect().
-      command(new CancelMoneyTransferCommand(moneyTransferId)).
-      to(MoneyTransferServiceChannels.moneyTransferServiceChannel)
-    ;
+      successReply()
+    .expectRolledBack();
+
+    assertEquals(MoneyTransferState.FAILED_DUE_TO_INSUFFICIENT_FUNDS, moneyTransfer.getState());
   }
 
 

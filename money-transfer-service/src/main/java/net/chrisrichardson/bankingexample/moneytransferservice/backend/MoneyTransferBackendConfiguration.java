@@ -7,7 +7,6 @@ import io.eventuate.tram.spring.events.publisher.TramEventsPublisherConfiguratio
 import io.eventuate.tram.sagas.spring.orchestration.SagaOrchestratorConfiguration;
 import io.eventuate.tram.sagas.spring.participant.SagaParticipantConfiguration;
 import net.chrisrichardson.bankingexample.moneytransferservice.sagas.AccountServiceProxy;
-import net.chrisrichardson.bankingexample.moneytransferservice.sagas.MoneyTransferServiceProxy;
 import net.chrisrichardson.bankingexample.moneytransferservice.sagas.TransferMoneySaga;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +34,8 @@ public class MoneyTransferBackendConfiguration {
 //  }
 
   @Bean
-  public TransferMoneySaga transferMoneySaga() {
-    return new TransferMoneySaga(new AccountServiceProxy(), new MoneyTransferServiceProxy());
+  public TransferMoneySaga transferMoneySaga(MoneyTransferRepository moneyTransferRepository) {
+    return new TransferMoneySaga(new AccountServiceProxy(), moneyTransferRepository);
   }
 
   @Bean
