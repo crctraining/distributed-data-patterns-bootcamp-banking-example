@@ -22,6 +22,7 @@ dependencies {
     testCompile "io.eventuate.tram.core:eventuate-tram-spring-in-memory:$eventuateTramVersion"
     testCompile "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
     testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
+    testCompile "io.eventuate.tram.core:eventuate-tram-testing-support:$eventuateTramVersion"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 

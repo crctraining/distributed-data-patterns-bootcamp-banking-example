@@ -8,11 +8,11 @@ import net.chrisrichardson.bankingexample.accountservice.common.events.AccountDe
 import net.chrisrichardson.bankingexample.accountservice.common.events.AccountOpenedEvent;
 import net.chrisrichardson.bankingexample.customerservice.common.CustomerCreatedEvent;
 
-public class CustomerViewAccountEventsSubscriber {
+public class CustomerViewEventsSubscriber {
 
   private CustomerViewService customerViewService;
 
-  public CustomerViewAccountEventsSubscriber(CustomerViewService customerViewService) {
+  public CustomerViewEventsSubscriber(CustomerViewService customerViewService) {
     this.customerViewService = customerViewService;
   }
 
@@ -45,10 +45,7 @@ public class CustomerViewAccountEventsSubscriber {
   }
 
   public void handleAccountCreditedEvent(DomainEventEnvelope<AccountCreditedEvent> de) {
-    AccountCreditedEvent event = de.getEvent();
-    customerViewService.creditAccount(de.getEventId(), de.getAggregateId(), Long.toString(event.getCustomerId()),
-            event.getAmount(),
-            event.getNewBalance(), event.getTransactionId());
+    throw new RuntimeException("not yet implemented");
   }
 
 

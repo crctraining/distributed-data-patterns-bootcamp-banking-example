@@ -45,7 +45,7 @@ public class TransferMoneySaga implements SimpleSaga<TransferMoneySagaData> {
   }
 
   private void complete(TransferMoneySagaData data) {
-    moneyTransferRepository.findById(data.getMoneyTransferId()).get().complete();
+    throw new RuntimeException("not yet implemented");
   }
 
   private void cancel(TransferMoneySagaData data) {

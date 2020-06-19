@@ -43,8 +43,7 @@ public class AccountCommandHandlers {
   }
 
   public Message credit(CommandMessage<CreditCommand> cm) {
-    accountService.credit(cm.getCommand().getAccountId(), cm.getCommand().getAmount());
-    return withSuccess();
+    throw new RuntimeException("not yet implemented");
   }
 
 
