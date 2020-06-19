@@ -49,6 +49,7 @@ public class CustomerViewAccountEventsSubscriber {
     customerViewService.creditAccount(de.getEventId(), de.getAggregateId(), Long.toString(event.getCustomerId()),
             event.getAmount(),
             event.getNewBalance(), event.getTransactionId());
+
   }
 
 
