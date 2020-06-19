@@ -1,0 +1,16 @@
+
+dependencies {
+    compile project(":common-domain")
+    compileOnly "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+    compile "io.eventuate.tram.core:eventuate-tram-spring-events:$eventuateTramVersion"
+
+    // tram-command has extra dependencies
+
+    compile ("io.eventuate.tram.core:eventuate-tram-spring-commands:$eventuateTramVersion")  {
+        exclude module: "spring-boot-starter-jdbc"
+    }
+
+    compile('org.apache.kafka:kafka-clients:2.3.0') {
+        force = true
+    }
+}

@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+    }
+}
+
+
+apply plugin: ServicePlugin
+
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+//    }
+//}
+
+
+dependencies {
+    compile project(":common-swagger")
+    compile project(":common-domain")
+    compile project(":money-transfer-service-api-messaging")
+    compile project(":customer-service-api-messaging")
+
+    compile project(":account-service-api-messaging")
+    compile project(":account-service-api-web")
+
+
+    compile "io.eventuate.tram.core:eventuate-tram-spring-jdbc-kafka:$eventuateTramVersion"
+    compile "io.eventuate.tram.sagas:eventuate-tram-sagas-spring-orchestration:$eventuateTramSagasVersion"
+    compile "io.eventuate.tram.sagas:eventuate-tram-sagas-spring-participant:$eventuateTramSagasVersion"
+
+    compile "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+    compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+    compile "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
+
+    compile('org.apache.kafka:kafka-clients:2.3.0') {
+        force = true
+    }
+
+    testCompile "io.eventuate.tram.core:eventuate-tram-spring-in-memory:$eventuateTramVersion"
+    testCompile "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
+    testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
+    testCompile "io.eventuate.tram.core:eventuate-tram-testing-support:$eventuateTramVersion"
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+
+}

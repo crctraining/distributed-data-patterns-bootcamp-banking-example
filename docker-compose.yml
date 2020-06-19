@@ -1,0 +1,155 @@
+version: '3'
+services:
+
+  mongodb:
+    image: mongo:3.0.4
+    command: --smallfiles --master
+    ports:
+      - "27017:27017"
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.2.4
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: "confluentinc/cp-kafka:5.2.4"
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LC
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  mysql:
+    image: eventuateio/eventuate-tram-sagas-mysql:0.13.0.RELEASE
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_USER=mysqluser
+      - MYSQL_PASSWORD=mysqlpw
+
+  cdc-service:
+    image: eventuateio/eventuate-cdc-service:0.6.1.RELEASE
+    ports:
+      - "8099:8080"
+    depends_on:
+      - mysql
+      - zookeeper
+      - kafka
+    environment:
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_TYPE: eventuate-local
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_READER: reader1
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_EVENTUATEDATABASESCHEMA: eventuate
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_READER: reader1
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_EVENTUATEDATABASESCHEMA: eventuate
+
+      EVENTUATE_CDC_READER_READER1_TYPE: mysql-binlog
+      EVENTUATE_CDC_READER_READER1_DATASOURCEURL: jdbc:mysql://mysql:3306/eventuate
+      EVENTUATE_CDC_READER_READER1_DATASOURCEUSERNAME: root
+      EVENTUATE_CDC_READER_READER1_DATASOURCEPASSWORD: rootpassword
+      EVENTUATE_CDC_READER_READER1_DATASOURCEDRIVERCLASSNAME: com.mysql.jdbc.Driver
+      EVENTUATE_CDC_READER_READER1_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common
+      EVENTUATE_CDC_READER_READER1_CDCDBUSERNAME: root
+      EVENTUATE_CDC_READER_READER1_CDCDBPASSWORD: rootpassword
+      EVENTUATE_CDC_READER_READER1_READOLDDEBEZIUMDBOFFSETSTORAGETOPIC: "false"
+      EVENTUATE_CDC_READER_READER1_MYSQLBINLOGCLIENTUNIQUEID: 1
+      EVENTUATE_CDC_READER_READER1_OFFSETSTOREKEY: MySqlBinlog
+
+  customer-service:
+    build: ./customer-service
+    depends_on:
+      - cdc-service
+      - zipkin
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+# end container
+  api-gateway-service:
+    build: ./api-gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - zipkin
+    environment:
+      API_GATEWAY_DESTINATIONS_CUSTOMER_SERVICE_URL: http://customer-service:8080
+      API_GATEWAY_DESTINATIONS_ACCOUNT_SERVICE_URL: http://account-service:8080
+      API_GATEWAY_DESTINATIONS_MONEY_TRANSFER_SERVICE_URL: http://money-transfer-service:8080
+      API_GATEWAY_DESTINATIONS_CUSTOMER_VIEW_SERVICE_URL: http://customer-view-service:8080
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+# end container
+  account-service:
+    build: ./account-service
+    ports:
+      - "8082:8080"
+    depends_on:
+      - cdc-service
+      - zipkin
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+# end container
+  money-transfer-service:
+    build: ./money-transfer-service
+    ports:
+      - "8083:8080"
+    depends_on:
+      - cdc-service
+      - zipkin
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+# end container
+  customer-view-service:
+    build: ./customer-view-service
+    depends_on:
+      - cdc-service
+      - mongodb
+      - zipkin
+    ports:
+      - "8084:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/eventuate
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb/bankingexampledb
+      SPRING_SLEUTH_ENABLED: "true"
+      SPRING_SLEUTH_SAMPLER_PROBABILITY: 1
+      SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
+# end container
+  zipkin:
+    image: openzipkin/zipkin:2.21
+    ports:
+      - "9411:9411"
+    environment:
+      JAVA_OPTS: -Xmx64m

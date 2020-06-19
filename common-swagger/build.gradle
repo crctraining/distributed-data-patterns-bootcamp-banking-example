@@ -1,0 +1,3 @@
+dependencies {
+    compile "io.eventuate.util:eventuate-util-spring-swagger:$eventuateUtilVersion"
+}
