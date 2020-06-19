@@ -8,11 +8,11 @@ import net.chrisrichardson.bankingexample.accountservice.common.events.AccountDe
 import net.chrisrichardson.bankingexample.accountservice.common.events.AccountOpenedEvent;
 import net.chrisrichardson.bankingexample.customerservice.common.CustomerCreatedEvent;
 
-public class CustomerViewAccountEventsSubscriber {
+public class CustomerViewEventsSubscriber {
 
   private CustomerViewService customerViewService;
 
-  public CustomerViewAccountEventsSubscriber(CustomerViewService customerViewService) {
+  public CustomerViewEventsSubscriber(CustomerViewService customerViewService) {
     this.customerViewService = customerViewService;
   }
 

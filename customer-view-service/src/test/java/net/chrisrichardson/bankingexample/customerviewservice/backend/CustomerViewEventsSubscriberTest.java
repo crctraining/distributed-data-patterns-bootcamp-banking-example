@@ -5,22 +5,20 @@ import net.chrisrichardson.bankingexample.accountservice.common.events.AccountCr
 import net.chrisrichardson.bankingexample.accountservice.common.events.AccountDebitedEvent;
 import net.chrisrichardson.bankingexample.accountservice.common.events.AccountOpenedEvent;
 import net.chrisrichardson.bankingexample.commondomain.Money;
-import net.chrisrichardson.bankingexample.customerservice.common.CustomerValidatedEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static io.eventuate.tram.testing.DomainEventHandlerUnitTestSupport.given;
 
-public class CustomerViewAccountEventsSubscriberTest {
+public class CustomerViewEventsSubscriberTest {
 
   private CustomerViewService customerViewService;
-  private CustomerViewAccountEventsSubscriber customerViewAccountEventsSubscriber;
+  private CustomerViewEventsSubscriber customerViewEventsSubscriber;
   private final long accountId = 101;
   private final String accountIdS = Long.toString(accountId);
 
@@ -38,13 +36,13 @@ public class CustomerViewAccountEventsSubscriberTest {
   @Before
   public void setUp() {
     customerViewService = mock(CustomerViewService.class);
-    customerViewAccountEventsSubscriber = new CustomerViewAccountEventsSubscriber(customerViewService);
+    customerViewEventsSubscriber = new CustomerViewEventsSubscriber(customerViewService);
   }
 
   @Test
   public void shouldHandleAccountOpenedEvent() {
     given().
-            eventHandlers(customerViewAccountEventsSubscriber.domainEventHandlers()).
+            eventHandlers(customerViewEventsSubscriber.domainEventHandlers()).
             when().
             aggregate("net.chrisrichardson.bankingexample.accountservice.backend.Account", accountId).
             publishes(new AccountOpenedEvent(accountInfo)).
@@ -59,7 +57,7 @@ public class CustomerViewAccountEventsSubscriberTest {
   @Test
   public void shouldHandleAccountDebitedEvent() {
     given().
-            eventHandlers(customerViewAccountEventsSubscriber.domainEventHandlers()).
+            eventHandlers(customerViewEventsSubscriber.domainEventHandlers()).
             when().
             aggregate("net.chrisrichardson.bankingexample.accountservice.backend.Account", accountId).
             publishes(new AccountDebitedEvent(customerId, debitAmount, postDebitBalance, null)).
@@ -74,7 +72,7 @@ public class CustomerViewAccountEventsSubscriberTest {
   @Test
   public void shouldHandleAccountCreditedEvent() {
     given().
-            eventHandlers(customerViewAccountEventsSubscriber.domainEventHandlers()).
+            eventHandlers(customerViewEventsSubscriber.domainEventHandlers()).
             when().
             aggregate("net.chrisrichardson.bankingexample.accountservice.backend.Account", accountId).
             publishes(new AccountCreditedEvent(customerId, creditAmount, postCreditBalance, null)).

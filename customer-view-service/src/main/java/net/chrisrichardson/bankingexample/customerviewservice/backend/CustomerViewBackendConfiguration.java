@@ -19,17 +19,17 @@ public class CustomerViewBackendConfiguration {
 
 
   @Bean
-  public CustomerViewAccountEventsSubscriber customerViewAccountEventsSubscriber(CustomerViewService customerViewService) {
-    return new CustomerViewAccountEventsSubscriber(customerViewService);
+  public CustomerViewEventsSubscriber customerViewAccountEventsSubscriber(CustomerViewService customerViewService) {
+    return new CustomerViewEventsSubscriber(customerViewService);
   }
 
 
   @Bean
-  public DomainEventDispatcher customerViewAccountEventsSubscriberDispatcher(CustomerViewAccountEventsSubscriber customerViewAccountEventsSubscriber,
+  public DomainEventDispatcher customerViewAccountEventsSubscriberDispatcher(CustomerViewEventsSubscriber customerViewEventsSubscriber,
                                                                              MessageConsumer messageConsumer,
                                                                              DomainEventNameMapping domainEventNameMapping) {
     return new DomainEventDispatcher("customerViewEventsSubscriberDispatcher",
-            customerViewAccountEventsSubscriber.domainEventHandlers(),
+            customerViewEventsSubscriber.domainEventHandlers(),
             messageConsumer,
             domainEventNameMapping);
   }
