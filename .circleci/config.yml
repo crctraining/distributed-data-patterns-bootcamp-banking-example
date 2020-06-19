@@ -1,0 +1,20 @@
+version:               2
+jobs:
+  build:
+    machine:           true
+    working_directory: ~/customers-accounts-and-money-transfers
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - distributed-data-patterns-bootcamp-banking-example-{{ checksum "build.gradle" }}
+            - distributed-data-patterns-bootcamp-banking-example-
+      - run:           TERM=dumb ./gradlew testClasses
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: distributed-data-patterns-bootcamp-banking-example-{{ checksum "build.gradle" }}
+      - run:
+          command:     |
+            export TERM=dumb
+            ./gradlew testClasses
