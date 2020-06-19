@@ -1,7 +1,6 @@
 package net.chrisrichardson.bankingexample.moneytransferservice;
 
 import io.eventuate.tram.spring.jdbckafka.TramJdbcKafkaConfiguration;
-import net.chrisrichardson.bankingexample.moneytransferservice.messaging.MoneyTransferServiceMessagingConfiguration;
 import net.chrisrichardson.bankingexample.moneytransferservice.web.MoneyTransferWebConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({MoneyTransferWebConfiguration.class,
-        MoneyTransferServiceMessagingConfiguration.class,
         TramJdbcKafkaConfiguration.class})
 @EnableAutoConfiguration
 public class MoneyTransferServiceMain {
