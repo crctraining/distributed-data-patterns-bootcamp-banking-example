@@ -1,5 +1,6 @@
 package net.chrisrichardson.bankingexample.customerservice.webtest;
 
+import io.eventuate.common.spring.jdbc.EventuateTransactionTemplateConfiguration;
 import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
 import net.chrisrichardson.bankingexample.customerservice.backend.CustomerMother;
 import net.chrisrichardson.bankingexample.customerservice.common.CustomerInfo;
@@ -56,7 +57,7 @@ public class CustomerServiceRestApiIntegrationTest {
   }
 
   @Configuration
-  @Import({CustomerWebConfiguration.class, TramInMemoryConfiguration.class})
+  @Import({CustomerWebConfiguration.class, TramInMemoryConfiguration.class, EventuateTransactionTemplateConfiguration.class})
   @EnableAutoConfiguration
   public static class CustomerServiceRestApiIntegrationTestConfiguration {
 

@@ -1,7 +1,8 @@
 package net.chrisrichardson.bankingexample.customerviewservice.backend;
 
+import io.eventuate.common.id.ApplicationIdGenerator;
 import io.eventuate.common.id.IdGenerator;
-import io.eventuate.common.id.IdGeneratorImpl;
+import io.eventuate.common.spring.jdbc.EventuateTransactionTemplateConfiguration;
 import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
 import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountInfo;
@@ -30,7 +31,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,7 +40,7 @@ public class CustomerViewServiceIntegrationTest {
   @Autowired
   private CustomerViewService customerViewService;
 
-  private IdGenerator idGenerator = new IdGeneratorImpl();
+  private IdGenerator idGenerator = new ApplicationIdGenerator();
   private long customerId;
   private String customerIdS;
   private long accountId;
@@ -62,9 +62,9 @@ public class CustomerViewServiceIntegrationTest {
     accountId = System.currentTimeMillis();
     accountIdS = Long.toString(accountId);
 
-    createAccount1EventId = idGenerator.genId().asString();
-    debitTransactionId = idGenerator.genId().asString();
-    creditTransactionId = idGenerator.genId().asString();
+    createAccount1EventId = idGenerator.genId(0L).asString();
+    debitTransactionId = idGenerator.genId(0L).asString();
+    creditTransactionId = idGenerator.genId(0L).asString();
   }
 
   @Test
@@ -78,9 +78,9 @@ public class CustomerViewServiceIntegrationTest {
 
     customerViewService.openAccount(createAccount1EventId, accountIdS, accountInfo1);
 
-    customerViewService.debitAccount(idGenerator.genId().asString(), accountIdS, customerIdS, debitAmount, postDebitBalance, debitTransactionId);
+    customerViewService.debitAccount(idGenerator.genId(0L).asString(), accountIdS, customerIdS, debitAmount, postDebitBalance, debitTransactionId);
 
-    customerViewService.creditAccount(idGenerator.genId().asString(), accountIdS, customerIdS, creditAmount, postCreditBalance, creditTransactionId);
+    customerViewService.creditAccount(idGenerator.genId(0L).asString(), accountIdS, customerIdS, creditAmount, postCreditBalance, creditTransactionId);
 
     Optional<CustomerView> maybeCustomer = customerViewService.findByCustomerId(customerIdS);
     assertTrue(maybeCustomer.isPresent());
@@ -123,7 +123,7 @@ public class CustomerViewServiceIntegrationTest {
 
     customerViewService.createCustomer(customerIdS, customerInfo);
 
-    customerViewService.debitAccount(idGenerator.genId().asString(), accountIdS, customerIdS, debitAmount, postDebitBalance, debitTransactionId);
+    customerViewService.debitAccount(idGenerator.genId(0L).asString(), accountIdS, customerIdS, debitAmount, postDebitBalance, debitTransactionId);
 
     Optional<CustomerView> customerView = customerViewService.findByCustomerId(customerIdS);
     assertTrue(customerView.isPresent());
@@ -131,7 +131,7 @@ public class CustomerViewServiceIntegrationTest {
   }
 
   @Configuration
-  @Import({CustomerViewBackendConfiguration.class, TramInMemoryConfiguration.class})
+  @Import({CustomerViewBackendConfiguration.class, TramInMemoryConfiguration.class, EventuateTransactionTemplateConfiguration.class})
   @EnableAutoConfiguration(exclude = CommonSwaggerConfiguration.class)
   public static class CustomerViewServiceIntegrationTestConfiguration {
   }
