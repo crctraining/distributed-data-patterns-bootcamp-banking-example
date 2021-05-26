@@ -12,7 +12,10 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import java.net.URI;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
 @EnableConfigurationProperties(ApiGatewayDestinations.class)
@@ -46,6 +49,13 @@ public class ApiGatewayConfiguration {
   @Bean
   public SwaggerHandlers swaggerHandlers(ApiGatewayDestinations apiGatewayDestinations, WebClient webClient) {
     return new SwaggerHandlers(webClient, apiGatewayDestinations);
+  }
+
+  @Bean
+  RouterFunction<ServerResponse> routerFunction() {
+    return  route(GET("/swagger-ui.html"), req ->
+            ServerResponse.temporaryRedirect(URI.create("/swagger-ui/index.html"))
+                    .build());
   }
 
   @Bean
