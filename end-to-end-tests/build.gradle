@@ -23,5 +23,8 @@ dependencies {
 
     testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
 
+    testCompile "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
+
+
 }
 

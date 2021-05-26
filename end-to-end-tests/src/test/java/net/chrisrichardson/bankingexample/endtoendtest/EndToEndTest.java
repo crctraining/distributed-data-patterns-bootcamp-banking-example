@@ -2,6 +2,7 @@ package net.chrisrichardson.bankingexample.endtoendtest;
 
 import io.eventuate.examples.tram.sagas.ordersandcustomers.customers.apigateway.AccountWithCustomer;
 import io.eventuate.util.test.async.Eventually;
+import io.eventuate.util.test.async.UrlTesting;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountInfo;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountState;
 import net.chrisrichardson.bankingexample.accountservice.common.CreateAccountResponse;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -219,5 +221,21 @@ public class EndToEndTest {
       assertEquals(toExpectedBalance, toAccount.getBalance());
     });
   }
+
+  @Test
+  public void testSwaggerUiUrls() throws IOException {
+    testSwaggerUiUrl(8080);
+    testSwaggerUiUrl(8081);
+    testSwaggerUiUrl(8082);
+    testSwaggerUiUrl(8083);
+    testSwaggerUiUrl(8084);
+  }
+
+  private void testSwaggerUiUrl(int port) throws IOException {
+    UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui/index.html");
+    UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui.html");
+  }
+
+
 
 }
