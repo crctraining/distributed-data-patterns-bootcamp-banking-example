@@ -4,7 +4,7 @@ import io.eventuate.common.id.ApplicationIdGenerator;
 import io.eventuate.common.id.IdGenerator;
 import io.eventuate.common.spring.jdbc.EventuateTransactionTemplateConfiguration;
 import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
-import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
+//import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountInfo;
 import net.chrisrichardson.bankingexample.commondomain.Money;
 import net.chrisrichardson.bankingexample.customerservice.common.Address;
@@ -132,7 +132,7 @@ public class CustomerViewServiceIntegrationTest {
 
   @Configuration
   @Import({CustomerViewBackendConfiguration.class, TramInMemoryConfiguration.class, EventuateTransactionTemplateConfiguration.class})
-  @EnableAutoConfiguration(exclude = CommonSwaggerConfiguration.class)
+  @EnableAutoConfiguration(/* exclude = CommonSwaggerConfiguration.class */)
   public static class CustomerViewServiceIntegrationTestConfiguration {
   }
 }
