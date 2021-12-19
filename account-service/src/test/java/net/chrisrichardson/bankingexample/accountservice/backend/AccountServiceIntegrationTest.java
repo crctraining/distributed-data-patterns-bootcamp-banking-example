@@ -2,7 +2,7 @@ package net.chrisrichardson.bankingexample.accountservice.backend;
 
 import io.eventuate.common.spring.jdbc.EventuateTransactionTemplateConfiguration;
 import io.eventuate.tram.spring.inmemory.TramInMemoryConfiguration;
-import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
+//import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
 import net.chrisrichardson.bankingexample.accountservice.common.AccountInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +47,7 @@ public class AccountServiceIntegrationTest {
   @Import({AccountBackendConfiguration.class,
           TramInMemoryConfiguration.class, EventuateTransactionTemplateConfiguration.class
   })
-  @EnableAutoConfiguration(exclude = CommonSwaggerConfiguration.class)
+  @EnableAutoConfiguration(/* exclude = CommonSwaggerConfiguration.class */)
   public static class Config {
 
 
