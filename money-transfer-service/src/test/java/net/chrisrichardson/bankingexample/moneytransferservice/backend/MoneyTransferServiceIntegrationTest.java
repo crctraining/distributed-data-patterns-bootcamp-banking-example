@@ -1,7 +1,7 @@
 package net.chrisrichardson.bankingexample.moneytransferservice.backend;
 
 import io.eventuate.tram.sagas.spring.inmemory.TramSagaInMemoryConfiguration;
-import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
+//import io.eventuate.util.spring.swagger.CommonSwaggerConfiguration;
 import net.chrisrichardson.bankingexample.moneytransferservice.common.MoneyTransferInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +40,7 @@ public class MoneyTransferServiceIntegrationTest {
 
   @Configuration
   @Import({MoneyTransferBackendConfiguration.class, TramSagaInMemoryConfiguration.class})
-  @EnableAutoConfiguration(exclude= CommonSwaggerConfiguration.class)
+  @EnableAutoConfiguration(/* exclude = CommonSwaggerConfiguration.class */)
   public static class MoneyTransferIntegrationTestConfiguration {
 
   }
