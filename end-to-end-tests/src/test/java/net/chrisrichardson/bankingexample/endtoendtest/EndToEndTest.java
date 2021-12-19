@@ -222,19 +222,19 @@ public class EndToEndTest {
     });
   }
 
-  @Test
-  public void testSwaggerUiUrls() throws IOException {
-    testSwaggerUiUrl(8080);
-    testSwaggerUiUrl(8081);
-    testSwaggerUiUrl(8082);
-    testSwaggerUiUrl(8083);
-    testSwaggerUiUrl(8084);
-  }
-
-  private void testSwaggerUiUrl(int port) throws IOException {
-    UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui/index.html");
-    UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui.html");
-  }
+  // @Test
+  // public void testSwaggerUiUrls() throws IOException {
+  //   testSwaggerUiUrl(8080);
+  //   testSwaggerUiUrl(8081);
+  //   testSwaggerUiUrl(8082);
+  //   testSwaggerUiUrl(8083);
+  //   testSwaggerUiUrl(8084);
+  // }
+  //
+  // private void testSwaggerUiUrl(int port) throws IOException {
+  //   UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui/index.html");
+  //   UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui.html");
+  // }
 
 
 

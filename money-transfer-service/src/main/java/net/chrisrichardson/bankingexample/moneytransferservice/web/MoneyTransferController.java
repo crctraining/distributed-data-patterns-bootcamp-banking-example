@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-
 @RestController
 @RequestMapping("/api/moneytransfers")
 public class MoneyTransferController {
@@ -25,7 +23,6 @@ public class MoneyTransferController {
 
   @RequestMapping(method = RequestMethod.POST)
   public CreateMoneyTransferResponse createMoneyTransfer(@Validated @RequestBody MoneyTransferInfo moneyTransferInfo) {
-    assertNotNull(moneyTransferInfo);
     return new CreateMoneyTransferResponse(moneyTransferService.createMoneyTransfer(moneyTransferInfo).getId());
   }
 
