@@ -71,7 +71,7 @@ public class SwaggerHandlers {
     ObjectMapper inOm = new ObjectMapper(new YAMLFactory());
     Mono<ClientResponse> response = client
             .get()
-            .uri(serviceUrl + "/v2/api-docs")
+            .uri(serviceUrl + "/v3/api-docs")
             .exchange();
 
     return response.flatMap(resp -> {
