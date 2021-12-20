@@ -45,6 +45,12 @@ public class ApiGatewayConfiguration {
             .build();
   }
 
+  @Bean
+  RouterFunction<ServerResponse> routerFunction() {
+    return  route(GET("/swagger-ui/index.html"), req ->
+            ServerResponse.temporaryRedirect(URI.create("/swagger-ui.html"))
+                    .build());
+  }
 
   @Bean
   public SwaggerHandlers swaggerHandlers(ApiGatewayDestinations apiGatewayDestinations, WebClient webClient) {
@@ -52,15 +58,8 @@ public class ApiGatewayConfiguration {
   }
 
   @Bean
-  RouterFunction<ServerResponse> routerFunction() {
-    return  route(GET("/swagger-ui.html"), req ->
-            ServerResponse.temporaryRedirect(URI.create("/swagger-ui/index.html"))
-                    .build());
-  }
-
-  @Bean
   public RouterFunction<ServerResponse> swaggerRouting(SwaggerHandlers swaggerHandlers) {
-    return RouterFunctions.route(GET("/swagger/swagger.yml"), swaggerHandlers::getSwagger);
+    return RouterFunctions.route(GET("/v3/api-docs"), swaggerHandlers::getSwagger);
   }
 
 }
