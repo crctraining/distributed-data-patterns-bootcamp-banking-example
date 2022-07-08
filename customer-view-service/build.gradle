@@ -8,8 +8,8 @@ dependencies {
     compile project(":customer-service-api-messaging")
     compile project(":customer-view-service-common")
 
-    compile "io.eventuate.tram.core:eventuate-tram-spring-events:$eventuateTramVersion"
-    compile "io.eventuate.tram.core:eventuate-tram-spring-jdbc-kafka:$eventuateTramVersion"
+    compile "io.eventuate.tram.core:eventuate-tram-spring-events"
+    compile "io.eventuate.tram.core:eventuate-tram-spring-jdbc-kafka"
 
     compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
     compile "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
@@ -19,10 +19,10 @@ dependencies {
         force = true
     }
 
-    testCompile "io.eventuate.tram.core:eventuate-tram-spring-in-memory:$eventuateTramVersion"
-    testCompile "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
-    testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
-    testCompile "io.eventuate.tram.core:eventuate-tram-testing-support:$eventuateTramVersion"
+    testCompile "io.eventuate.tram.core:eventuate-tram-spring-in-memory"
+    testCompile "io.eventuate.util:eventuate-util-test"
+    testCompile "io.eventuate.tram.core:eventuate-tram-test-util"
+    testCompile "io.eventuate.tram.core:eventuate-tram-testing-support"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
