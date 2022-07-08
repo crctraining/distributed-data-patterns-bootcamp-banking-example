@@ -10,10 +10,9 @@ class ServicePlugin implements Plugin<Project> {
 
         project.dependencies {
 
-            compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
-            implementation 'org.springframework.cloud:spring-cloud-sleuth-zipkin'
-
-            compile "io.eventuate.tram.core:eventuate-tram-spring-cloud-sleuth-integration:${project.ext.eventuateTramVersion}"
+            compile "org.springframework.cloud:spring-cloud-starter-sleuth"
+            compile "org.springframework.cloud:spring-cloud-sleuth-zipkin"
+            compile "io.eventuate.tram.springcloudsleuth:eventuate-tram-spring-cloud-sleuth-tram-starter"
         }
 
     }

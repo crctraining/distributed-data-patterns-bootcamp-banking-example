@@ -9,10 +9,10 @@ import net.chrisrichardson.bankingexample.accountservice.common.commands.Insuffi
 import org.junit.Before;
 import org.junit.Test;
 
+import static io.eventuate.tram.testing.commands.CommandMessageHandlerUnitTestSupport.assertReplyTypeEquals;
+import static io.eventuate.tram.testing.commands.CommandMessageHandlerUnitTestSupport.given;
 import static net.chrisrichardson.bankingexample.accountservice.backend.AccountMother.accountId;
 import static net.chrisrichardson.bankingexample.accountservice.backend.AccountMother.amount;
-import static net.chrisrichardson.bankingexample.accountservice.messaging.CommandMessageHandlerUnitTestSupport.assertReplyTypeEquals;
-import static net.chrisrichardson.bankingexample.accountservice.messaging.CommandMessageHandlerUnitTestSupport.given;
 import static org.mockito.Mockito.*;
 
 public class AccountCommandHandlersTest {
