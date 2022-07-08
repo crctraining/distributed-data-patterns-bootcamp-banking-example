@@ -3,9 +3,8 @@ package net.chrisrichardson.bankingexample.accountservice.messaging;
 import io.eventuate.tram.events.common.DomainEventNameMapping;
 import io.eventuate.tram.events.subscriber.DomainEventDispatcher;
 import io.eventuate.tram.messaging.consumer.MessageConsumer;
-import io.eventuate.tram.messaging.producer.MessageProducer;
-import io.eventuate.tram.sagas.common.SagaLockManager;
 import io.eventuate.tram.sagas.participant.SagaCommandDispatcher;
+import io.eventuate.tram.sagas.participant.SagaCommandDispatcherFactory;
 import net.chrisrichardson.bankingexample.accountservice.backend.AccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,14 +34,10 @@ public class AccountMessagingConfiguration {
 
   @Bean
   public SagaCommandDispatcher orderCommandHandlersDispatcher(AccountCommandHandlers accountServiceCommandHandlers,
-                                                              MessageConsumer messageConsumer,
-                                                              MessageProducer messageProducer,
-                                                              SagaLockManager sagaLockManager) {
-    return new SagaCommandDispatcher("accountServiceCommands",
-            accountServiceCommandHandlers.commandHandlers(),
-            messageConsumer,
-            messageProducer,
-            sagaLockManager);
+                                                              SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
+    return sagaCommandDispatcherFactory.make("accountServiceCommands",
+            accountServiceCommandHandlers.commandHandlers());
+
   }
 
 
