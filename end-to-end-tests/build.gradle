@@ -13,9 +13,9 @@ dependencies {
 
     testCompile project(":api-gateway-service-api-web")
 
-    testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
+    testCompile "io.eventuate.tram.core:eventuate-tram-test-util"
 
-    testCompile "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
+    testCompile "io.eventuate.util:eventuate-util-test"
 
 
 }

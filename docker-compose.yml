@@ -2,21 +2,20 @@ version: '3'
 services:
 
   mongodb:
-    image: mongo:3.6
-    command: --smallfiles --master
+    image: mongo:5.0.6
     ports:
       - "27017:27017"
 
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.2.4
+    image: eventuateio/eventuate-zookeeper:$EVENTUATE_COMMON_VERSION
     ports:
       - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
 
   kafka:
-    image: "confluentinc/cp-kafka:5.2.4"
+    image: "eventuateio/eventuate-kafka:$EVENTUATE_MESSAGING_KAFKA_IMAGE_VERSION"
     ports:
       - 9092:9092
     depends_on:
@@ -30,7 +29,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   mysql:
-    image: eventuateio/eventuate-tram-sagas-mysql:0.13.0.RELEASE
+    image: eventuateio/eventuate-tram-sagas-mysql:$EVENTUATE_SAGA_VERSION
     ports:
       - 3306:3306
     environment:
@@ -39,7 +38,7 @@ services:
       - MYSQL_PASSWORD=mysqlpw
 
   cdc-service:
-    image: eventuateio/eventuate-cdc-service:0.6.1.RELEASE
+    image: eventuateio/eventuate-cdc-service:$EVENTUATE_CDC_VERSION
     ports:
       - "8099:8080"
     depends_on:
@@ -69,9 +68,14 @@ services:
       EVENTUATE_CDC_READER_READER1_READOLDDEBEZIUMDBOFFSETSTORAGETOPIC: "false"
       EVENTUATE_CDC_READER_READER1_MYSQLBINLOGCLIENTUNIQUEID: 1
       EVENTUATE_CDC_READER_READER1_OFFSETSTOREKEY: MySqlBinlog
+      EVENTUATE_CDC_READER_READER1_OUTBOXID: 1
+      JAVA_OPTS: -Xmx64m
 
   customer-service:
-    build: ./customer-service
+    build:
+      context:  ./customer-service
+      args:
+        baseImageVersion: ${EVENTUATE_JAVA_BASE_IMAGE_VERSION}
     depends_on:
       - cdc-service
       - zipkin
@@ -86,7 +90,10 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 # end container
   api-gateway-service:
-    build: ./api-gateway-service
+    build:
+      context:  ./api-gateway-service
+      args:
+        baseImageVersion: ${EVENTUATE_JAVA_BASE_IMAGE_VERSION}
     ports:
       - "8080:8080"
     depends_on:
@@ -101,7 +108,10 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 # end container
   account-service:
-    build: ./account-service
+    build:
+      context: ./account-service
+      args:
+        baseImageVersion: ${EVENTUATE_JAVA_BASE_IMAGE_VERSION}
     ports:
       - "8082:8080"
     depends_on:
@@ -116,7 +126,10 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 # end container
   money-transfer-service:
-    build: ./money-transfer-service
+    build:
+      context: ./money-transfer-service
+      args:
+        baseImageVersion: ${EVENTUATE_JAVA_BASE_IMAGE_VERSION}
     ports:
       - "8083:8080"
     depends_on:
@@ -131,7 +144,10 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 # end container
   customer-view-service:
-    build: ./customer-view-service
+    build:
+      context: ./customer-view-service
+      args:
+        baseImageVersion: ${EVENTUATE_JAVA_BASE_IMAGE_VERSION}
     depends_on:
       - cdc-service
       - mongodb
@@ -148,7 +164,7 @@ services:
       SPRING_ZIPKIN_BASE_URL: http://zipkin:9411/
 # end container
   zipkin:
-    image: openzipkin/zipkin:2.21
+    image: openzipkin/zipkin:2.23
     ports:
       - "9411:9411"
     environment:

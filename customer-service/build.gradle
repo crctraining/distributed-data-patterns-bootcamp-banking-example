@@ -6,7 +6,7 @@ dependencies {
     compile project(":customer-service-api-web")
     compile project(":account-service-api-messaging")
 
-    compile "io.eventuate.tram.core:eventuate-tram-spring-jdbc-kafka:$eventuateTramVersion"
+    compile "io.eventuate.tram.core:eventuate-tram-spring-jdbc-kafka"
 
     compile "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
     compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
@@ -16,9 +16,9 @@ dependencies {
         force = true
     }
 
-    testCompile "io.eventuate.tram.core:eventuate-tram-spring-in-memory:$eventuateTramVersion"
-    testCompile "io.eventuate.util:eventuate-util-test:$eventuateUtilVersion"
-    testCompile "io.eventuate.tram.core:eventuate-tram-test-util:$eventuateTramVersion"
+    testCompile "io.eventuate.tram.core:eventuate-tram-spring-in-memory"
+    testCompile "io.eventuate.util:eventuate-util-test"
+    testCompile "io.eventuate.tram.core:eventuate-tram-test-util"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 }

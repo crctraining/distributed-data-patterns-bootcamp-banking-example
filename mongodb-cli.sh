@@ -1,3 +1,6 @@
 #! /bin/bash
 
-docker run ${1:--it} --network=${PWD##*/}_default --rm  mongo:3.6 sh -c "exec /usr/bin/mongo --host mongodb bankingexampledb"
+. ./_network-env.sh
+
+docker run ${1:--it} --network=${NETWORK_NAME?} --rm \
+  mongo:5.0.6 sh -c "exec /usr/bin/mongo --host mongodb bankingexampledb"
