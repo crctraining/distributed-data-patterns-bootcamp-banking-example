@@ -1,20 +1,14 @@
-version:               2
-jobs:
-  build:
-    machine:           true
-    working_directory: ~/customers-accounts-and-money-transfers
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - distributed-data-patterns-bootcamp-banking-example-{{ checksum "build.gradle" }}
-            - distributed-data-patterns-bootcamp-banking-example-
-      - run:           TERM=dumb ./gradlew testClasses
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: distributed-data-patterns-bootcamp-banking-example-{{ checksum "build.gradle" }}
-      - run:
-          command:     |
-            export TERM=dumb
-            ./gradlew testClasses
+version: 2.1
+orbs:
+  eventuate-gradle-build-and-test: "eventuate_io/eventuate-gradle-build-and-test@0.2.1"
+workflows:
+  version: 2.1
+  build-test-and-deploy:
+    jobs:
+      - eventuate-gradle-build-and-test/build-and-test:
+          name: mysql-binlog-intel
+          script: ./gradlew testClasses
+      - eventuate-gradle-build-and-test/build-and-test:
+          name: mysql-binlog-arm
+          resource_class: arm.medium
+          script: ./gradlew testClasses
