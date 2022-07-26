@@ -1,5 +1,4 @@
 dependencies {
-    // compile "io.eventuate.util:eventuate-util-spring-swagger"
     compile "org.springframework.boot:spring-boot-starter-web"
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.1'
+    implementation "org.springdoc:springdoc-openapi-ui:$springDocOpenApiVersion"
 }

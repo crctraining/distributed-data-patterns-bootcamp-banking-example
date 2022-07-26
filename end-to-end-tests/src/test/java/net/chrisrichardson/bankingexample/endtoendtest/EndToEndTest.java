@@ -232,6 +232,7 @@ public class EndToEndTest {
   }
 
   private void testSwaggerUiUrl(int port) throws IOException {
+    UrlTesting.assertUrlStatusIsOk("localhost", port, "/v3/api-docs");
     UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui/index.html");
     UrlTesting.assertUrlStatusIsOk("localhost", port, "/swagger-ui.html");
   }
